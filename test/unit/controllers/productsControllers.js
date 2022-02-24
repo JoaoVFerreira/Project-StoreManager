@@ -4,6 +4,9 @@ const sinon = require('sinon');
 const productsService = require('../../../services/productsService');
 const productsController = require('../../../controllers/productsController');
 
+const errorId = { status: 404, message: 'Product not found' };
+const errorGetAll = { status: 404, message: 'There is no products in database' };
+
 describe('When gets successfully', () => {
   const request = {};
   const response = {};
@@ -39,27 +42,25 @@ describe('When gets successfully', () => {
 })
 
 describe('When throws an error', () => {
-  const response = {};
-  const request = {};
+  const response = {}, request = {};
+  let next;
   
   before(() => {
     response.status = sinon.stub().returns(response);
     response.json = sinon.stub().returns();
+    next = sinon.stub().returns();
 
-    sinon.stub(productsService, 'getAll').resolves(
-      { status: 404, message: 'There is no products in database' }
-    );
+    sinon.stub(productsService, 'getAll').rejects(errorGetAll);
   });
 
   after(() => {
     productsService.getAll.restore();
   })
 
-  it('should have 404 status', async () => {
-    await productsController.getAllProducts(request, response);
-    // console.log(await productsController.getAllProducts(request, response));
+  it('should call next with error object', async () => {
+    await productsController.getAllProducts(request, response, next);
 
-    expect(response.status.calledWith(404)).to.be.true;
+    expect(next.calledWith(errorGetAll)).to.be.true;
   })
 })
 
@@ -96,5 +97,31 @@ describe('When get ID successfully', () => {
     await productsController.getProductById(request, response);
 
     expect(response.json.calledWith(sinon.match.object)).to.be.true;
+  })
+})
+
+describe('When ID does not exist', () => {
+  const response = {};
+  const request = {};
+  let next;
+  
+  before(() => {
+    request.params = { id: 2 };
+
+    response.status = sinon.stub().returns(response);
+    response.json = sinon.stub().returns();
+    next = sinon.stub().returns();
+
+    sinon.stub(productsService, 'findById').rejects(errorId);
+  });
+
+  after(() => {
+    productsService.findById.restore();
+  })
+
+  it('should call next with error object', async () => {
+    await productsController.getProductById(request, response, next);
+
+    expect(next.calledWith(errorId)).to.be.true;
   })
 })

@@ -10,7 +10,7 @@ const getAll = async () => {
 
 const findById = async (id) => {
   const getProductById = await productsModel.findById(id);
-  const noProductIdError = { status: 404, message: 'This ID does not exist in database' };
+  const noProductIdError = { status: 404, message: 'Product not found' };
   if (getProductById.length === 0) throw noProductIdError;
 
   return getProductById;
