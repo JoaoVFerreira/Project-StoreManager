@@ -39,7 +39,7 @@ describe('When gets successfully', () => {
 
     expect(response.json.calledWith(sinon.match.array)).to.be.equal(true);
   })
-})
+});
 
 describe('When throws an error', () => {
   const response = {}, request = {};
@@ -62,7 +62,7 @@ describe('When throws an error', () => {
 
     expect(next.calledWith(errorGetAll)).to.be.true;
   })
-})
+});
 
 describe('When get ID successfully', () => {
   const response = {};
@@ -98,7 +98,7 @@ describe('When get ID successfully', () => {
 
     expect(response.json.calledWith(sinon.match.object)).to.be.true;
   })
-})
+});
 
 describe('When ID does not exist', () => {
   const response = {};
@@ -124,4 +124,4 @@ describe('When ID does not exist', () => {
 
     expect(next.calledWith(errorId)).to.be.true;
   })
-})
+});
