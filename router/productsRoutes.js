@@ -2,10 +2,17 @@ const express = require('express');
 
 const router = express.Router();
 
-const { getAllProducts, getProductById } = require('../controllers/productsController');
-// const { verifyGetAllProducts } = require('../middlewares/productsMiddleware');
+const { productBodyValidation } = require('../middlewares/productsBodyValidation');
+
+const { 
+    getAllProducts,
+    getProductById,
+    registerProduct,
+} = require('../controllers/productsController');
 
 router.get('/', getAllProducts);
+
+router.post('/', productBodyValidation, registerProduct);
 
 router.get('/:id', getProductById);
 

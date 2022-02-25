@@ -16,7 +16,16 @@ const findById = async (id) => {
   return getProductById;
 };
 
+const registerProduct = async (name, quantity) => {
+  const onlyOneProductInDB = await productsModel.registerProduct(name, quantity);
+  const alreadyExistsError = { status: 409, message: 'Product already exists' };
+  if (!onlyOneProductInDB) throw alreadyExistsError;
+
+  return onlyOneProductInDB;
+};
+
 module.exports = {
   getAll,
   findById,
+  registerProduct,
 };

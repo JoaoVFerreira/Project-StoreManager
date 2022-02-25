@@ -14,7 +14,22 @@ const findById = async (id) => {
   return rows;
 };
 
+const registerProduct = async (name, quantity) => {
+  const allProducts = await getAll();
+  if (allProducts.find((row) => row.name === name)) return null;
+
+  const QUERY = 'INSERT INTO StoreManager.products (name, quantity) VALUES(?, ?)';
+  const [registered] = await connection.execute(QUERY, [name, quantity]);
+  
+  return {
+    id: registered.insertId,
+    name,
+    quantity,
+  };
+};
+
 module.exports = {
   getAll,
   findById,
+  registerProduct,
 };
