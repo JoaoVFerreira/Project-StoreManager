@@ -8,6 +8,7 @@ const {
     getAllProducts,
     getProductById,
     registerProduct,
+    updateProduct,
 } = require('../controllers/productsController');
 
 router.get('/', getAllProducts);
@@ -15,5 +16,7 @@ router.get('/', getAllProducts);
 router.post('/', productBodyValidation, registerProduct);
 
 router.get('/:id', getProductById);
+
+router.put('/:id', updateProduct);
 
 module.exports = router;

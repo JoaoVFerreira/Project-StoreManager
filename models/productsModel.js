@@ -20,9 +20,23 @@ const registerProduct = async (name, quantity) => {
 
   const QUERY = 'INSERT INTO StoreManager.products (name, quantity) VALUES(?, ?)';
   const [registered] = await connection.execute(QUERY, [name, quantity]);
-  
+
   return {
     id: registered.insertId,
+    name,
+    quantity,
+  };
+};
+
+const updateProduct = async (name, quantity, id) => {
+  const QUERY = 'UPDATE StoreManager.products SET name = ?, quantity = ? WHERE id = ?;';
+  const [update] = await connection.execute(QUERY, [name, quantity, id]);
+  console.log(update);
+
+  if (update.affectedRows === 0) return null;
+
+  return {
+    id,
     name,
     quantity,
   };
@@ -32,4 +46,5 @@ module.exports = {
   getAll,
   findById,
   registerProduct,
+  updateProduct,
 };

@@ -1,5 +1,7 @@
 const productsModel = require('../models/productsModel');
 
+const notFoundProductError = { status: 404, message: 'Product not found' };
+
 const getAll = async () => {
   const allProducts = await productsModel.getAll();
   const noProductsError = { status: 404, message: 'There is no products in database' };
@@ -10,8 +12,7 @@ const getAll = async () => {
 
 const findById = async (id) => {
   const getProductById = await productsModel.findById(id);
-  const noProductIdError = { status: 404, message: 'Product not found' };
-  if (getProductById.length === 0) throw noProductIdError;
+  if (getProductById.length === 0) throw notFoundProductError;
 
   return getProductById;
 };
@@ -24,8 +25,16 @@ const registerProduct = async (name, quantity) => {
   return onlyOneProductInDB;
 };
 
+const updatedProduct = async (name, quantity, id) => {
+  const isUpdated = await productsModel.updateProduct(name, quantity, id);
+  if (!isUpdated) throw notFoundProductError;
+
+  return isUpdated;
+};
+
 module.exports = {
   getAll,
   findById,
   registerProduct,
+  updatedProduct,
 };
