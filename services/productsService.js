@@ -11,7 +11,7 @@ const getAll = async () => {
 };
 
 const findById = async (id) => {
-  const getProductById = await productsModel.findById(id);
+  const getProductById = await productsModel.findById(+id);
   if (getProductById.length === 0) throw notFoundProductError;
 
   return getProductById;
@@ -26,10 +26,17 @@ const registerProduct = async (name, quantity) => {
 };
 
 const updatedProduct = async (name, quantity, id) => {
-  const isUpdated = await productsModel.updateProduct(name, quantity, id);
+  const isUpdated = await productsModel.updateProduct(name, quantity, +id);
   if (!isUpdated) throw notFoundProductError;
 
   return isUpdated;
+};
+
+const deleteProduct = async (id) => {
+  const delectedProduct = await productsModel.deleteProduct(+id);
+  if (!delectedProduct) throw notFoundProductError;
+
+  return delectedProduct;
 };
 
 module.exports = {
@@ -37,4 +44,5 @@ module.exports = {
   findById,
   registerProduct,
   updatedProduct,
+  deleteProduct,
 };

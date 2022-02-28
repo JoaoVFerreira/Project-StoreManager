@@ -42,9 +42,19 @@ const updateProduct = async (name, quantity, id) => {
   };
 };
 
+const deleteProduct = async (id) => {
+ const rowId = await findById(id);
+ if (rowId.length === 0) return null;
+
+ const QUERY = 'DELETE FROM StoreManager.products WHERE id = ?;';
+ const wipeOutProduct = await connection.execute(QUERY, [id]);
+ return wipeOutProduct;
+};
+
 module.exports = {
   getAll,
   findById,
   registerProduct,
   updateProduct,
+  deleteProduct,
 };
