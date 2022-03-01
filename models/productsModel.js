@@ -18,7 +18,7 @@ const registerProduct = async (name, quantity) => {
   const allProducts = await getAll();
   if (allProducts.find((row) => row.name === name)) return null;
 
-  const QUERY = 'INSERT INTO StoreManager.products (name, quantity) VALUES(?, ?)';
+  const QUERY = 'INSERT INTO StoreManager.products (name, quantity) VALUES(?, ?);';
   const [registered] = await connection.execute(QUERY, [name, quantity]);
 
   return {

@@ -13,6 +13,11 @@ WHERE sale_id = ?
 ORDER BY sale_id ASC,
 product_id ASC;`;
 
+const QUERYREGISTER = `INSERT INTO StoreManager.sales_products 
+(sale_id, product_id, quantity) VALUES(?, ?, ?);`;
+
+const QUERY_ID_INSERT = 'INSERT INTO StoreManager.sales (date) VALUES(now());';
+
 const getAll = async () => {
   const [rows] = await connection.execute(QUERYALL);
   return rows.map((row) => ({
@@ -32,7 +37,27 @@ const findById = async (id) => {
   }));
 };
 
+const createIdForSale = async () => {
+  const [idSale] = await connection.execute(QUERY_ID_INSERT); 
+  return idSale.insertId;
+};
+
+const insertSale = async ({ productId, quantity }) => {
+  await connection.execute(QUERYREGISTER, [productId, quantity]);
+};
+
+const registerSale = async (body) => {
+  const saleId = await createIdForSale();
+  body.map(insertSale);
+
+  return {
+    id: saleId,
+    itemsSold: body,
+  };
+};
+
 module.exports = {
   getAll,
   findById,
+  registerSale,
 };

@@ -1,4 +1,5 @@
 const salesService = require('../services/salesService');
+const salesModel = require('../models/salesModel');
 
 const getAllSales = async (_req, res, next) => {
   try {
@@ -19,7 +20,17 @@ const getSaleId = async (req, res, next) => {
   }
 };
 
+const registerSale = async (req, res, next) => {
+  try {
+    const reponseSale = await salesModel.registerTest(req.body);
+    return res.status(200).json(reponseSale);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllSales,
   getSaleId,
+  registerSale,
 };
