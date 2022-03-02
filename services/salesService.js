@@ -21,8 +21,14 @@ const registerSale = async (body) => {
   return sales;
 };
 
+const updateSaleProducts = async (id, body) => {
+  const updateSale = await salesModel.updateSaleProducts(id, body);
+  return updateSale;
+};
+
 module.exports = {
   getAll,
   findById,
   registerSale,
+  updateSaleProducts,
 };

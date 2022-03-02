@@ -18,6 +18,19 @@ const QUERYREGISTER = `INSERT INTO StoreManager.sales_products
 
 const QUERY_ID_INSERT = 'INSERT INTO StoreManager.sales (date) VALUES(now());';
 
+const QUERY_UPDATE_SALES = `UPDATE StoreManager.sales 
+SET 
+    date = NOW()
+WHERE
+    id = ?;`;
+
+const QUERY_UPDATE_SALES_PRODUCTS = `UPDATE StoreManager.sales_products 
+SET 
+    product_id = ?,
+    quantity = ?
+WHERE
+    sale_id = ?;`;
+
 const getAll = async () => {
   const [rows] = await connection.execute(QUERYALL);
   return rows.map((row) => ({
@@ -56,8 +69,24 @@ const registerSale = async (body) => {
   };
 };
 
+const updateSale = async (id) => {
+  await connection.execute(QUERY_UPDATE_SALES, [id]);
+};
+
+const updateSaleProducts = async (id, body) => {
+  await updateSale(id);
+  const { productId, quantity } = body[0];
+  await connection.execute(QUERY_UPDATE_SALES_PRODUCTS, [productId, quantity, id]);
+
+  return {
+    saleId: id,
+    itemUpdated: body,
+  };
+};
+
 module.exports = {
   getAll,
   findById,
   registerSale,
+  updateSaleProducts,
 };
