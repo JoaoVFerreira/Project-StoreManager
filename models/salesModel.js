@@ -31,6 +31,10 @@ SET
 WHERE
     sale_id = ?;`;
 
+const QUERY_DELETE_SALE = `DELETE FROM StoreManager.sales 
+WHERE
+    id = ?;`;
+
 const getAll = async () => {
   const [rows] = await connection.execute(QUERYALL);
   return rows.map((row) => ({
@@ -84,9 +88,17 @@ const updateSaleProducts = async (id, body) => {
   };
 };
 
+const deleteSale = async (id) => {
+  const [deletedSale] = await connection.execute(QUERY_DELETE_SALE, [id]);
+  if (deletedSale.affectedRows === 0) return null;
+  
+  return deletedSale;
+};
+
 module.exports = {
   getAll,
   findById,
   registerSale,
   updateSaleProducts,
+  deleteSale,
 };

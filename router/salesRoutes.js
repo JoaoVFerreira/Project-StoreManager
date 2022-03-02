@@ -8,7 +8,9 @@ const {
   getAllSales, 
   getSaleId,
   registerSale,
-  updateSale } = require('../controllers/salesController');
+  updateSale,
+  deleteSale,
+} = require('../controllers/salesController');
 
 router.get('/', getAllSales);
 
@@ -17,5 +19,7 @@ router.get('/:id', getSaleId);
 router.post('/', saleBodyValidation, registerSale);
 
 router.put('/:id', saleBodyValidation, updateSale);
+
+router.delete('/:id', deleteSale);
 
 module.exports = router;

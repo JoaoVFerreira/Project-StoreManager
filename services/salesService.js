@@ -1,18 +1,17 @@
 const salesModel = require('../models/salesModel');
 
+const saleNotFound = { status: 404, message: 'Sale not found' };
+
 const getAll = async () => {
   const sales = await salesModel.getAll();
   const noSalesError = { status: 404, message: 'There is no sales in database' };
   if (sales.length === 0) throw noSalesError;
-
   return sales;
 };
 
 const findById = async (id) => {
   const sale = await salesModel.findById(id);
-  const noIdError = { status: 404, message: 'Sale not found' };
-  if (sale.length === 0) throw noIdError;
-
+  if (sale.length === 0) throw saleNotFound;
   return sale;
 };
 
@@ -26,9 +25,16 @@ const updateSaleProducts = async (id, body) => {
   return updateSale;
 };
 
+const deleteSale = async (id) => {
+  const deletedSale = await salesModel.deleteSale(id);
+  if (!deletedSale) throw saleNotFound;
+  return deletedSale;
+};
+
 module.exports = {
   getAll,
   findById,
   registerSale,
   updateSaleProducts,
+  deleteSale,
 };
