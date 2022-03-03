@@ -18,7 +18,7 @@ router.post('/', productBodyValidation, registerProduct);
 
 router.get('/:id', getProductById);
 
-router.put('/:id', updateProduct);
+router.put('/:id', productBodyValidation, updateProduct);
 
 router.delete('/:id', deleteProduct);
 

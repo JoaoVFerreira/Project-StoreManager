@@ -35,6 +35,16 @@ const QUERY_DELETE_SALE = `DELETE FROM StoreManager.sales
 WHERE
     id = ?;`;
 
+const QUERY_UPDATE_QUANTITY = `UPDATE StoreManager.products 
+SET 
+    quantity = quantity - ?
+WHERE
+    id = ?;`;
+
+const updateQuantityProductSale = async ({ quantity, productId }) => {
+  await connection.execute(QUERY_UPDATE_QUANTITY, [quantity, productId]);
+};
+
 const getAll = async () => {
   const [rows] = await connection.execute(QUERYALL);
   return rows.map((row) => ({
@@ -66,6 +76,7 @@ const insertSale = async ({ productId, quantity }) => {
 const registerSale = async (body) => {
   const saleId = await createIdForSale();
   body.map(insertSale);
+  body.map(updateQuantityProductSale);
 
   return {
     id: saleId,

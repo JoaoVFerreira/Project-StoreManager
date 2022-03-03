@@ -121,4 +121,63 @@ describe('When the specific ID does not exist', () => {
       expect(result).to.include.all.keys('id', 'name', 'quantity');
     })
   })
+});
+
+describe('When register a new product', () => { 
+  before(async () => {
+    const result = [[], [{}, {}]]
+
+    sinon.stub(connection, 'execute').resolves(result);
+  })
+
+  after(async () => {
+    connection.execute.restore();
+  })
+
+  it('should return an array of all products', async () => {
+    const result = await productsModel.getAll()
+    result.find()
+    expect(result).to.be.an('array');
+  })
+
+  it('should return an empty array', async () => {
+    const result = await productsModel.findById(2);
+
+    expect(result).to.be.empty;
+  })
+
+  describe('When exist ID', () => {
+    before(() => {
+      sinon.stub(productsModel, 'findById').resolves([
+        {
+          id: 2,
+          name: 'Traje de encolhimento',
+          quantity: 20
+        }
+      ])
+    })
+
+    after(() => {
+      productsModel.findById.restore();
+    })
+
+    it('should return an array of object', async () => {
+      const result = await productsModel.findById(2);
+
+      expect(result).to.be.an('array');
+      expect(result[0]).to.be.an('object');
+    })
+
+    it('should return a non empty array', async () => {
+      const result = await productsModel.findById(2);
+
+      expect(result).not.to.be.empty;
+    })
+
+    it('shoul have keys "id", "name" and "quantity"', async () => {
+      const [result] = await productsModel.findById(2);
+
+      expect(result).to.include.all.keys('id', 'name', 'quantity');
+    })
+  })
 })

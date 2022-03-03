@@ -22,7 +22,7 @@ const getSaleId = async (req, res, next) => {
 const registerSale = async (req, res, next) => {
   try {
     const reponseSale = await salesService.registerSale(req.body);
-    return res.status(200).json(reponseSale);
+    return res.status(201).json(reponseSale);
   } catch (error) {
     next(error);
   }
