@@ -46,22 +46,30 @@ const updateQuantityProductSale = async ({ quantity, productId }) => {
 };
 
 const getAll = async () => {
-  const [rows] = await connection.execute(QUERYALL);
-  return rows.map((row) => ({
-    saleId: row.sale_id,
-    date: row.date,
-    productId: row.product_id,
-    quantity: row.quantity,
-  }));
+  try {
+    const [rows] = await connection.execute(QUERYALL);
+    return rows.map((row) => ({
+      saleId: row.sale_id,
+      date: row.date,
+      productId: row.product_id,
+      quantity: row.quantity,
+    }));
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const findById = async (id) => {
-  const [rows] = await connection.execute(QUERYID, [id]);
-  return rows.map((row) => ({
-    date: row.date,
-    productId: row.product_id,
-    quantity: row.quantity,
-  }));
+  try {
+    const [rows] = await connection.execute(QUERYID, [id]);
+    return rows.map((row) => ({
+      date: row.date,
+      productId: row.product_id,
+      quantity: row.quantity,
+    }));
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const createIdForSale = async () => {
@@ -69,19 +77,22 @@ const createIdForSale = async () => {
   return idSale.insertId;
 };
 
-const insertSale = async ({ productId, quantity }) => {
-  await connection.execute(QUERYREGISTER, [productId, quantity]);
-};
-
 const registerSale = async (body) => {
-  const saleId = await createIdForSale();
-  body.map(insertSale);
-  body.map(updateQuantityProductSale);
+  try {
+    const saleId = await createIdForSale();
+    body.map(async ({ productId, quantity }) => {
+      await connection.execute(QUERYREGISTER, [saleId, productId, quantity]);
+    });
 
-  return {
-    id: saleId,
-    itemsSold: body,
-  };
+    body.map(updateQuantityProductSale);
+
+    return {
+      id: saleId,
+      itemsSold: body,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const updateSale = async (id) => {
@@ -89,21 +100,29 @@ const updateSale = async (id) => {
 };
 
 const updateSaleProducts = async (id, body) => {
-  await updateSale(id);
-  const { productId, quantity } = body[0];
-  await connection.execute(QUERY_UPDATE_SALES_PRODUCTS, [productId, quantity, id]);
-
-  return {
-    saleId: id,
-    itemUpdated: body,
-  };
+  try {
+    await updateSale(id);
+    const { productId, quantity } = body[0];
+    await connection.execute(QUERY_UPDATE_SALES_PRODUCTS, [productId, quantity, id]);
+  
+    return {
+      saleId: id,
+      itemUpdated: body,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 const deleteSale = async (id) => {
-  const [deletedSale] = await connection.execute(QUERY_DELETE_SALE, [id]);
-  if (deletedSale.affectedRows === 0) return null;
-  
-  return deletedSale;
+  try {
+    const [deletedSale] = await connection.execute(QUERY_DELETE_SALE, [id]);
+    if (deletedSale.affectedRows === 0) return null;
+    
+    return deletedSale;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
 module.exports = {

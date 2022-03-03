@@ -1,16 +1,18 @@
 const { expect } = require('chai');
+
 const sinon = require('sinon');
 
 const productsServices = require('../../../services/productsService');
+const productModels = require('../../../models/productsModel');
 
 
 describe('When product does not exist in DB', () => {
   before(() => {
-    sinon.stub(productsServices, 'getAll').resolves([]);
+    sinon.stub(productModels, 'getAll').resolves([]);
   })
 
   after(() => {
-    productsServices.getAll.restore();
+    productModels.getAll.restore();
   })
 
   it('should return an array', async () => {
@@ -26,9 +28,30 @@ describe('When product does not exist in DB', () => {
   })
 })
 
+describe('Trown an object error with', () => {
+  const noProductsError = { status: 404, message: 'There is no products in database' }
+  before(() => {
+    sinon.stub(productModels, 'getAll').throws(noProductsError);
+  })
+
+  after(() => {
+    productModels.getAll.restore();
+  })
+
+  it('should return an object error', async () => {
+    try {
+      await productModels.getAll();
+    } catch (error) {
+      expect(error).to.be.an('object');
+      expect(error).to.throw(noProductsError)
+      expect(error).to.have.all.keys('status', 'message');
+    }
+  })
+})
+
 describe('When exists products in DB', () => {
   before(() => {
-    sinon.stub(productsServices, 'getAll').resolves([
+    sinon.stub(productModels, 'getAll').resolves([
       {
        id: 1, 
        name: 'Martelo de Thor',
@@ -38,7 +61,7 @@ describe('When exists products in DB', () => {
   })
 
   after(() => {
-    productsServices.getAll.restore();
+    productModels.getAll.restore();
   })
 
   it('should return an array of objects', async () => {
@@ -63,11 +86,11 @@ describe('When exists products in DB', () => {
 
 describe('When ID does not exist in DB', () => {
   before(() => {
-    sinon.stub(productsServices, 'findById').resolves([])
+    sinon.stub(productModels, 'findById').resolves([])
   })
   
   after(() => {
-    productsServices.findById.restore();
+    productModels.findById.restore();
   })
 
   it('should return an array', async () => {
@@ -85,7 +108,7 @@ describe('When ID does not exist in DB', () => {
 
 describe('When ID exist in DB', () => {
   before(() => {
-    sinon.stub(productsServices, 'findById').resolves([
+    sinon.stub(productModels, 'findById').resolves([
       {
         id: 2,
         name: 'Traje de encolhimento',
@@ -95,7 +118,7 @@ describe('When ID exist in DB', () => {
   })
 
   after(() => {
-    productsServices.findById.restore();
+    productModels.findById.restore();
   })
 
   it('should return an array of object', async () => {

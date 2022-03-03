@@ -123,7 +123,7 @@ describe('When the specific ID does not exist', () => {
   })
 });
 
-describe('When register a new product', () => { 
+/*describe('When register a new product', () => { 
   before(async () => {
     const result = [[], [{}, {}]]
 
@@ -180,4 +180,4 @@ describe('When register a new product', () => {
       expect(result).to.include.all.keys('id', 'name', 'quantity');
     })
   })
-})
+})*/
