@@ -199,11 +199,9 @@ describe('verify error in DB', async() => {
   })
 
   it('should return an object error', async () => {
-    try {
-      await productsModel.getAll();
-    } catch (error) {
-      expect(error).to.be.an('object');
+    await productsModel.getAll().catch((error) => {
+      expect(error).to.be.an('error');
       expect(error.message).to.be.a('string');
-    }
+    })
   })
 })

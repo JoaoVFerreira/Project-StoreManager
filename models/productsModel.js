@@ -6,7 +6,6 @@ const getAll = async () => {
     const [rows] = await connection.execute(QUERY);
     return rows;
   } catch (error) {
-    console.log('TIPO DO FORMATO DO ERRO', typeof error);
     throw new Error(error.message);
   }
 };
