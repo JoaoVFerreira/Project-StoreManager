@@ -15,35 +15,20 @@ describe('When product does not exist in DB', () => {
     productModels.getAll.restore();
   })
 
-  it('should return an array', async () => {
-    const result = await productsServices.getAll();
-
-    expect(result).to.be.an('array');
-  })
-
-  it('should return an empty array', async () => {
-    const result = await productsServices.getAll();
-
-    expect(result).to.be.empty;
-  })
-})
-
-describe('Trown an object error with', () => {
-  const noProductsError = { status: 404, message: 'There is no products in database' }
-  before(() => {
-    sinon.stub(productModels, 'getAll').throws(noProductsError);
-  })
-
-  after(() => {
-    productModels.getAll.restore();
-  })
-
-  it('should return an object error', async () => {
+  it('should return an error object', async () => {
     try {
-      await productModels.getAll();
+      await productsServices.getAll();
     } catch (error) {
       expect(error).to.be.an('object');
-      expect(error).to.throw(noProductsError)
+      expect(error).to.have.all.keys('status', 'message');
+    }
+  })
+
+  it('should return a non empty object', async () => {
+    try {
+      await productsServices.getAll();
+    } catch (error) {
+      expect(error).not.to.be.empty;
       expect(error).to.have.all.keys('status', 'message');
     }
   })
@@ -93,16 +78,22 @@ describe('When ID does not exist in DB', () => {
     productModels.findById.restore();
   })
 
-  it('should return an array', async () => {
-    const result = await productsServices.findById(2);
-
-    expect(result).to.be.an('array');
+  it('should throw an error object', async () => {
+    try {
+      await productsServices.findById(2);
+    } catch (error) {
+      expect(error).to.be.an('object');
+      expect(error).to.have.all.keys('status', 'message');
+    }
   })
 
-  it('should return an empty array', async () => {
-    const result = await productsServices.findById(2);
-
-    expect(result).to.be.empty;
+  it('should a non empty object', async () => {
+    try {
+      await productsServices.findById(2);
+    } catch (error) {
+      expect(error).not.to.be.empty;
+      expect(error).to.have.all.keys('status', 'message');
+    }
   })
 })
 

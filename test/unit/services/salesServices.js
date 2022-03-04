@@ -2,32 +2,40 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 
 const salesServices = require('../../../services/salesService');
+const salesModel = require('../../../models/salesModel');
+const { not } = require('joi');
 
 describe('When sales does not exist in DB', () => {
   before(() => {
-    sinon.stub(salesServices, 'getAll').resolves([]);
+    sinon.stub(salesModel, 'getAll').resolves([]);
   })
 
   after(() => {
-    salesServices.getAll.restore();
+    salesModel.getAll.restore();
   })
 
-  it('should return an array', async () => {
-    const result = await salesServices.getAll();
-
-    expect(result).to.be.an('array');
+  it('should return an error object', async () => {
+    try {
+      await salesServices.getAll();
+    } catch (error) {
+      expect(error).to.be.an('object');
+      expect(error).to.includes.all.keys('status', 'message');
+    }
   })
 
-  it('should return an empty array', async () => {
-    const result = await salesServices.getAll();
-
-    expect(result).to.be.empty;
+  it('should return an empty object', async () => {
+    try {
+      await salesServices.getAll();
+    } catch (error) {
+      expect(error).not.to.be.empty;
+      expect(error).to.includes.all.keys('status', 'message');
+    }
   })
 })
 
 describe('When exists sales in DB', () => {
   before(() => {
-    sinon.stub(salesServices, 'getAll').resolves([
+    sinon.stub(salesModel, 'getAll').resolves([
       {
        saleId: 1, 
        date: '2022-02-24T18:28:37.000Z',
@@ -38,7 +46,7 @@ describe('When exists sales in DB', () => {
   })
 
   after(() => {
-    salesServices.getAll.restore();
+    salesModel.getAll.restore();
   })
 
   it('should return an array of objects', async () => {
@@ -63,29 +71,35 @@ describe('When exists sales in DB', () => {
 
 describe('When ID does not exist in DB', () => {
   before(() => {
-    sinon.stub(salesServices, 'findById').resolves([])
+    sinon.stub(salesModel, 'findById').resolves([])
   })
   
   after(() => {
-    salesServices.findById.restore();
+    salesModel.findById.restore();
   })
 
-  it('should return an array', async () => {
-    const result = await salesServices.findById(2);
-
-    expect(result).to.be.an('array');
+  it('should return an error object', async () => {
+    try {
+      await salesServices.findById(2);
+    } catch (error) {
+      expect(error).to.be.an('object');
+      expect(error).to.includes.all.keys('status', 'message');
+    }
   })
 
-  it('should return an empty array', async () => {
-    const result = await salesServices.findById(2);
-
-    expect(result).to.be.empty;
+  it('should return an non empty array', async () => {
+    try {
+      await salesServices.findById(2);
+    } catch (error) {
+      expect(error).not.to.be.empty;
+      expect(error).to.includes.all.keys('status', 'message');
+    }
   })
 })
 
 describe('When ID exist in DB', () => {
   before(() => {
-    sinon.stub(salesServices, 'findById').resolves([
+    sinon.stub(salesModel, 'findById').resolves([
       { 
         date: '2022-02-24T18:28:37.000Z',
         productId: 1,
@@ -95,7 +109,7 @@ describe('When ID exist in DB', () => {
   })
 
   after(() => {
-    salesServices.findById.restore();
+    salesModel.findById.restore();
   })
 
   it('should return an array of object', async () => {

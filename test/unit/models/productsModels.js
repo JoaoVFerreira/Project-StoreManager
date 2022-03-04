@@ -124,6 +124,8 @@ describe('When the specific ID does not exist', () => {
 });
 
 /*describe('When register a new product', () => { 
+
+
   before(async () => {
     const result = [[], [{}, {}]]
 
@@ -181,3 +183,27 @@ describe('When the specific ID does not exist', () => {
     })
   })
 })*/
+
+describe('verify error in DB', async() => {
+
+  before(async () => {
+    const result = {
+      message: "Unknown database 'StoreManager'"
+    };
+
+    sinon.stub(connection, 'execute').rejects(result);
+  })
+
+  after(async () => {
+    connection.execute.restore();
+  })
+
+  it('should return an object error', async () => {
+    try {
+      await productsModel.getAll();
+    } catch (error) {
+      expect(error).to.be.an('object');
+      expect(error.message).to.be.a('string');
+    }
+  })
+})
