@@ -31,6 +31,12 @@ SET
 WHERE
     sale_id = ?;`;
 
+const QUERY_UPDATE_PRODUCTS_AFTER_DELETE = `UPDATE StoreManager.products 
+SET 
+    quantity = quantity + ?
+WHERE
+    id = ?;`;
+
 const QUERY_DELETE_SALE = `DELETE FROM StoreManager.sales 
 WHERE
     id = ?;`;
@@ -80,12 +86,12 @@ const createIdForSale = async () => {
 const registerSale = async (body) => {
   try {
     const saleId = await createIdForSale();
-    body.map(async ({ productId, quantity }) => {
+    await Promise.all(body.map(async ({ productId, quantity }) => {
       await connection.execute(QUERYREGISTER, [saleId, productId, quantity]);
-    });
-
-    body.map(updateQuantityProductSale);
-
+    }));
+   
+    await Promise.all(body.map(updateQuantityProductSale));
+    
     return {
       id: saleId,
       itemsSold: body,
@@ -116,6 +122,10 @@ const updateSaleProducts = async (id, body) => {
 
 const deleteSale = async (id) => {
   try {
+    const products = await findById(id);
+    await Promise.all(products.map(async ({ quantity, productId }) => {
+      await connection.execute(QUERY_UPDATE_PRODUCTS_AFTER_DELETE, [quantity, productId]);
+    }));
     const [deletedSale] = await connection.execute(QUERY_DELETE_SALE, [id]);
     if (deletedSale.affectedRows === 0) return null;
     
