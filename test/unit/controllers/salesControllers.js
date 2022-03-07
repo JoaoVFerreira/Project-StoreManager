@@ -126,3 +126,46 @@ describe('When ID does not exist', () => {
     expect(next.calledWith(errorId)).to.be.true;
   })
 });
+
+describe('When register a sales sucessfully', () => {
+  const response = {};
+  const request = {};
+
+  before(() => {
+    request.body =   [
+      {
+        productId: 1,
+        quantity: 3
+      }
+    ]
+
+    response.status = sinon.stub().returns(response);
+    response.json = sinon.stub().returns();
+
+    sinon.stub(salesServices, 'registerSale').resolves({
+      id: 1,
+      itemsSold: [
+        {
+          productId: 1,
+          quantity: 3
+        }
+      ]
+    })
+  })
+
+  after(() => {
+    salesServices.registerSale.restore();
+  })
+
+  it('should have the status 201-OK', async () => {
+    await salesController.registerSale(request, response);
+
+    expect(response.status.calledWith(201)).to.be.true;
+  })
+
+  it('should return a json object', async () => {
+    await salesController.registerSale(request, response);
+
+    expect(response.json.calledWith(sinon.match.object)).to.be.true;
+  })
+})

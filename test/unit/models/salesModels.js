@@ -121,4 +121,77 @@ describe('When the specific ID does not exist', () => {
       expect(result).to.include.all.keys('date', 'productId', 'quantity');
     })
   })
+});
+
+describe('When the sale is registered', () => {
+  before(async () => {
+    const result = {
+      message: "Unknown database 'StoreManager'"
+    };
+
+    sinon.stub(connection, 'execute').rejects(result);
+  })
+
+  after(async () => {
+    connection.execute.restore();
+  })
+
+  it('should return an object error', async () => {
+    await salesModels.registerSale().catch((error) => {
+      expect(error).to.be.an('error');
+      expect(error.message).to.be.a('string');
+    })
+  })
+
+  describe('When register is succesfull', () => {
+    before(() => {
+      sinon.stub(salesModels, 'registerSale').resolves({
+        id: 1,
+        itemsSold: [
+          {
+            productId: 1,
+            quantity: 3
+          }
+        ]
+      })
+    })
+
+    after(() => {
+      salesModels.registerSale.restore();
+    })
+
+    it('should return an object', async () => {
+      const result = await salesModels.registerSale();
+
+      expect(result).to.be.an('object');
+    })
+
+    it('should contain the keys "id" and "itemsSold"', async () => {
+      const result = await salesModels.registerSale();
+
+      expect(result).to.includes.all.keys('id', 'itemsSold');
+    })
+
+  })
+});
+
+describe('Whe the sale is updated', () => {
+  before(async () => {
+    const result = {
+      message: "Unknown database 'StoreManager'"
+    };
+
+    sinon.stub(connection, 'execute').rejects(result);
+  })
+
+  after(async () => {
+    connection.execute.restore();
+  })
+
+  it('should return an object error', async () => {
+    await salesModels.updateSaleProducts().catch((error) => {
+      expect(error).to.be.an('error');
+      expect(error.message).to.be.a('string');
+    })
+  })
 })

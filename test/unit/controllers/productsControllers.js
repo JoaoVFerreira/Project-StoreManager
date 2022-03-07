@@ -6,6 +6,7 @@ const productsController = require('../../../controllers/productsController');
 
 const errorId = { status: 404, message: 'Product not found' };
 const errorGetAll = { status: 404, message: 'There is no products in database' };
+const errorProductAlreadyExists = { status: 409, message: 'Product already exists' };
 
 describe('When gets successfully', () => {
   const request = {};
@@ -125,3 +126,58 @@ describe('When ID does not exist', () => {
     expect(next.calledWith(errorId)).to.be.true;
   })
 });
+
+describe('When register is succesfull', () => {
+  const request = {};
+  const response = {};
+
+  before(() => {
+    request.body = { name: 'produto', quantity: 10 };
+    response.status = sinon.stub().returns(response);
+    response.json = sinon.stub().returns();
+
+    sinon.stub(productsService, 'registerProduct').resolves(
+      { id: 1, name: 'produto', quantity: 10 }
+    )
+  });
+
+  after(() => {
+    productsService.registerProduct.restore();
+  })
+
+  it('should return status 201-OK', async () => {
+    await productsController.registerProduct(request, response);
+    
+    expect(response.status.calledWith(201)).to.be.equal(true);
+  })
+
+  it('should return a json object', async () => {
+    await productsController.registerProduct(request, response)
+
+    expect(response.json.calledWith(sinon.match.object)).to.be.equal(true);
+  })
+})
+
+describe('When the product already exists', () => {
+  const response = {}, request = {};
+  let next;
+  
+  before(() => {
+    request.body = { name: 'produto', quantity: 10 };
+    response.status = sinon.stub().returns(response);
+    response.json = sinon.stub().returns();
+    next = sinon.stub().returns();
+
+    sinon.stub(productsService, 'registerProduct').rejects(errorProductAlreadyExists);
+  });
+
+  after(() => {
+    productsService.registerProduct.restore();
+  })
+
+  it('should call next with error object', async () => {
+    await productsController.registerProduct(request, response, next);
+
+    expect(next.calledWith(errorProductAlreadyExists)).to.be.true;
+  })
+})
