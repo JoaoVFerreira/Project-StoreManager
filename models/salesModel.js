@@ -1,5 +1,7 @@
 const connection = require('./connection');
 
+const productModel = require('./productsModel');
+
 const QUERYALL = `SELECT * FROM StoreManager.sales
 JOIN StoreManager.sales_products AS SP
 ON SP.sale_id = id
@@ -83,6 +85,14 @@ const createIdForSale = async () => {
   return idSale.insertId;
 };
 
+const verifyProductQuantity = async (body) => {
+  const sales = await Promise.all(body.map(async ({ productId, quantity }) => {
+    const [product] = await productModel.findById(productId);
+    return product.quantity - quantity > 0;
+  }));
+  return sales;
+};
+
 const registerSale = async (body) => {
   try {
     const saleId = await createIdForSale();
@@ -141,4 +151,5 @@ module.exports = {
   registerSale,
   updateSaleProducts,
   deleteSale,
+  verifyProductQuantity,
 };

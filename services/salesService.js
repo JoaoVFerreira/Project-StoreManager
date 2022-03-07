@@ -1,6 +1,7 @@
 const salesModel = require('../models/salesModel');
 
 const saleNotFound = { status: 404, message: 'Sale not found' };
+const AmountError = { status: 422, message: 'Such amount is not permitted to sell' };
 
 const getAll = async () => {
   const sales = await salesModel.getAll();
@@ -16,6 +17,9 @@ const findById = async (id) => {
 };
 
 const registerSale = async (body) => {
+  const isQuantityAllowed = await salesModel.verifyProductQuantity(body);
+  const isAllowed = isQuantityAllowed.includes(true);
+  if (!isAllowed) throw AmountError;
   const sales = await salesModel.registerSale(body);
   return sales;
 };
