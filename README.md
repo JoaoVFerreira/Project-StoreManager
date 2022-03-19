@@ -2,8 +2,8 @@
 
 ## Descrição do Projeto
 > BACK-END
-<p>:rocket: O objetivo da aplicação foi criar um CRUD(Create, Read, Update e Delete), 
-  utilizando conceitos de API Restfull, arquitetura como MSC(Model, Service e Controller) 
+<p>:rocket: O objetivo da aplicação foi criar um CRUD (Create, Read, Update e Delete), 
+  utilizando conceitos de API Restfull, arquitetura como MSC (Model, Service e Controller) 
   e testes para cobrir pelo menos 60% da aplicação :pushpin:</p>
 
 ### Tecnologias Utizadas :dart:
