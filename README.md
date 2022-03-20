@@ -5,6 +5,9 @@
 <p>:rocket: O objetivo da aplicação foi criar um CRUD (Create, Read, Update e Delete), 
   utilizando conceitos de API Restfull, arquitetura como MSC (Model, Service e Controller) 
   e testes para cobrir pelo menos 60% da aplicação :pushpin:</p>
+  
+### Maior desafio :gem:
+<p> Criar os testes para aplicação e entender que eu tinha que mockar a função anterior que eu queria testar e principalmente a camada de Controller foi a parte mais desafiadora pra mim</p>
 
 ### Tecnologias Utizadas :dart:
 
